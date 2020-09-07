@@ -9,7 +9,7 @@
 
 - name: copy content
   copy:
-    content: "<h1>Hello this is from <b>{{ ansible_host }}</b></h1>"
+    content: "<h1>Hello this is from {{ ansible_host }}</h1>"
     dest: /var/www/html/index.html    
 
 - name: service httpd start
