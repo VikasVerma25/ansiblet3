@@ -1,0 +1,5 @@
+---
+# vars file for aws-webserver
+count: 1
+osname: "webserver"
+mykey: "key1"

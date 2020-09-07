@@ -1,0 +1,42 @@
+---
+# tasks file for aws-webserver
+  - name: Create an EC2 key
+    ec2_key:
+      name: "{{ mykey }}"
+    register: ec2_key
+
+  - name: save private key
+    copy:
+      content: "{{ ec2_key.key.private_key }}"
+      dest: "/root/myplaybooks/aws-private.pem"
+      mode: 0600
+    when: ec2_key.changed
+
+  - name: Launch EC2 instance
+    ec2:
+      key_name: "{{ mykey }}"
+      instance_type: t2.micro
+      image: "ami-0ebc1ac48dfd14136"
+      wait: yes
+      group_id: "sg-02653de055ee17990"
+      count: "{{ count }}"
+      vpc_subnet_id: "subnet-2f99f263"
+      assign_public_ip: yes
+      instance_tags:
+        Name: "{{ osname }}"  
+    register: ec2
+
+  - name: Add new instance to host group
+    add_host:
+        hostname: "{{ item.public_ip }}"
+        groupname: "{{ osname }}"
+    loop: "{{ ec2.instances }}"
+
+  - name: Wait for SSH to come up
+    delegate_to: "{{ item.public_dns_name }}"
+    wait_for_connection:
+        delay: 60
+        timeout: 320
+    loop: "{{ ec2.instances }}"
+    
+

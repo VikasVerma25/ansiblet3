@@ -1,0 +1,19 @@
+---
+# tasks file for lbserver
+
+- name: install haproxy software
+  package:
+    name: "haproxy"
+    state: present
+
+- name: copy conf file of haproxy
+  template:
+    src: "haproxy.cfg"
+    dest: "/etc/haproxy/haproxy.cfg"
+  notify: lb restart
+
+- name: start haproxy service 
+  service:
+    name: "haproxy"
+    state: started
+

@@ -1,0 +1,22 @@
+- hosts: localhost
+  gather_facts: no
+  roles:
+          - role: aws
+            count: 3
+            osname: "web"
+            mykey: "task3key"
+
+          - role: aws
+            count: 1
+            osname: "lb"
+            mykey: "task3key"
+
+- hosts: web
+  gather_facts: no
+  roles:
+          - role: apache-web
+
+- hosts: lb
+  gather_facts: no
+  roles:
+          - role: lbserver
